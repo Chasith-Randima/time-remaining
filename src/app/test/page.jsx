@@ -1368,7 +1368,7 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState,useRef } from "react";
 import quotes from "@/data/quote";
 
 const CountdownTimer = () => {
@@ -1400,13 +1400,21 @@ const CountdownTimer = () => {
   const [showNotification, setShowNotification] = useState(false);
   const [notificationContent, setNotificationContent] = useState("");
   const [showModal, setShowModal] = useState(false);
-  const notificationSound = new Audio("/notification.wav");
+  // const notificationSound = new Audio("/notification.wav");
+  const notificationSoundRef = useRef(null); // Use ref for Audio object
 
   useEffect(() => {
-    notificationSound.load(); // Ensures the audio file is ready to play
-
-    // notificationSound.play().catch(error => console.error("Audio playback failed:", error));
+    if (typeof window !== "undefined") {
+      notificationSoundRef.current = new Audio("/notification.wav"); // Initialize in browser
+      notificationSoundRef.current.load(); // Load audio file
+    }
   }, []);
+
+  // useEffect(() => {
+  //   notificationSound.load(); // Ensures the audio file is ready to play
+
+  //   // notificationSound.play().catch(error => console.error("Audio playback failed:", error));
+  // }, []);
 
 
   // Function to calculate remaining time until midnight
@@ -1548,7 +1556,7 @@ const CountdownTimer = () => {
     );
     setShowNotification(true);
     // notificationSound.play(); 
-    notificationSound.play().catch(error => console.error("Audio playback failed:", error));
+    notificationSoundRef.play().catch(error => console.error("Audio playback failed:", error));
   };
 
   useEffect(() => {
@@ -1601,9 +1609,7 @@ const CountdownTimer = () => {
         className="w-full h-auto p-6 rounded-2xl bg-cover bg-center flex flex-col items-center justify-center"
         style={{ backgroundImage: "url(https://pagedone.io/asset/uploads/1710565658.jpg)" }}
       >
-        <button onClick={() => notificationSound.play().catch(error => console.error("Test Audio playback failed:", error))}>
-  Test Sound
-</button>
+  
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-4xl">
           {/* Left Section - Today's Remaining Time */}
